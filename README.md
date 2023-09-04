@@ -1,1 +1,2 @@
-# udacity-data-streaming-projectsgit
+# udacity-data-streaming-projects
+
