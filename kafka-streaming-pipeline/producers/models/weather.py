@@ -22,7 +22,7 @@ class Weather(Producer):
         "status", "sunny partly_cloudy cloudy windy precipitation", start=0
     )
 
-    rest_proxy_url = os.getenv("KAFKA_REST_PROXY_URL", "http://localhost:8082")
+    rest_proxy_url = "http://localhost:8082"
     key_schema = None
     value_schema = None
 
@@ -32,7 +32,7 @@ class Weather(Producer):
     def __init__(self, month):
 
         super().__init__(
-            f"weather_{month}",
+            "org.chicago.cta.weather.v1",
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
         )

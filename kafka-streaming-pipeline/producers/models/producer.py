@@ -10,8 +10,8 @@ from confluent_kafka.avro import AvroProducer
 
 logger = logging.getLogger(__name__)
 
-KAFKA_BROKER_HOST_URL = os.getenv("KAFKA_BROKER_HOST_URL", "PLAINTEXT://localhost:9092,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094")
-SCHEMA_REGISTRY_URL = os.getenv("SCHEMA_REGISTRY_URL", "http://localhost:8081")
+KAFKA_BROKER_HOST_URL = "PLAINTEXT://localhost:9092,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094"
+SCHEMA_REGISTRY_URL = "http://localhost:8081"
 
 
 class Producer:
@@ -40,7 +40,7 @@ class Producer:
         self.broker_properties = {
             "bootstrap.servers": KAFKA_BROKER_HOST_URL,
             "schema.registry.url": SCHEMA_REGISTRY_URL,
-            "group.id": f"{self.topic_name}",
+            # "group.id": f"{self.topic_name}",
         }
 
         # If the topic does not already exist, try to create it

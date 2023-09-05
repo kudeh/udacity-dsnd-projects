@@ -1,5 +1,5 @@
 {
-  "namespace": "com.udacity",
+  "namespace": "org.chicago.cta.station.arrivals",
   "type": "record",
   "name": "arrival.value",
   "fields": [

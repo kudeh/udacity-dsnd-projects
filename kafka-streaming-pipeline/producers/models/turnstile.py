@@ -29,7 +29,7 @@ class Turnstile(Producer):
 
         # initialize turnstile producer
         super().__init__(
-            f"station.turnstiles.{station_name}",
+            "org.chicago.cta.station.turnstiles",
             key_schema=Turnstile.key_schema,
             value_schema=Turnstile.value_schema,
             num_partitions=3,
