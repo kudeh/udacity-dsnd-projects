@@ -1,14 +1,18 @@
 """Defines core consumer functionality"""
 import logging
+import os
 
 import confluent_kafka
-from confluent_kafka import Consumer
+from confluent_kafka import Consumer, OFFSET_BEGINNING
 from confluent_kafka.avro import AvroConsumer
 from confluent_kafka.avro.serializer import SerializerError
 from tornado import gen
 
 
 logger = logging.getLogger(__name__)
+
+KAFKA_BROKER_HOST_URL = "PLAINTEXT://localhost:9092,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094"
+SCHEMA_REGISTRY_URL = "http://localhost:8081"
 
 
 class KafkaConsumer:
@@ -30,46 +34,30 @@ class KafkaConsumer:
         self.consume_timeout = consume_timeout
         self.offset_earliest = offset_earliest
 
-        #
-        #
-        # TODO: Configure the broker properties below. Make sure to reference the project README
-        # and use the Host URL for Kafka and Schema Registry!
-        #
-        #
+        # configure broker properties
         self.broker_properties = {
-                #
-                # TODO
-                #
+            "bootstrap.servers": KAFKA_BROKER_HOST_URL,
+            "group.id": f"{topic_name_pattern}".replace("^",""),
+            "auto.offset.reset": "earliest" if offset_earliest else "latest",
         }
 
-        # TODO: Create the Consumer, using the appropriate type.
+        # Create the based on type
         if is_avro is True:
-            self.broker_properties["schema.registry.url"] = "http://localhost:8081"
-            #self.consumer = AvroConsumer(...)
+            self.broker_properties["schema.registry.url"] = SCHEMA_REGISTRY_URL
+            self.consumer = AvroConsumer(self.broker_properties)
         else:
-            #self.consumer = Consumer(...)
-            pass
+            self.consumer = Consumer(self.broker_properties)
 
-        #
-        #
-        # TODO: Configure the AvroConsumer and subscribe to the topics. Make sure to think about
-        # how the `on_assign` callback should be invoked.
-        #
-        #
-        # self.consumer.subscribe( TODO )
+        # subscribe to topics
+        self.consumer.subscribe([self.topic_name_pattern], on_assign=self.on_assign)
 
     def on_assign(self, consumer, partitions):
         """Callback for when topic assignment takes place"""
-        # TODO: If the topic is configured to use `offset_earliest` set the partition offset to
+        # If the topic is configured to use `offset_earliest` set the partition offset to
         # the beginning or earliest
-        logger.info("on_assign is incomplete - skipping")
-        for partition in partitions:
-            pass
-            #
-            #
-            # TODO
-            #
-            #
+        if self.offset_earliest:
+            for partition in partitions:
+                partition.offset = OFFSET_BEGINNING
 
         logger.info("partitions assigned for %s", self.topic_name_pattern)
         consumer.assign(partitions)
@@ -84,21 +72,24 @@ class KafkaConsumer:
 
     def _consume(self):
         """Polls for a message. Returns 1 if a message was received, 0 otherwise"""
-        #
-        #
-        # TODO: Poll Kafka for messages. Make sure to handle any errors or exceptions.
-        # Additionally, make sure you return 1 when a message is processed, and 0 when no message
-        # is retrieved.
-        #
-        #
-        logger.info("_consume is incomplete - skipping")
-        return 0
+        while True:
+            try:
+                message = self.consumer.poll(self.consume_timeout)
+            except Exception as e:
+                logger.error("Error %s, occured polling message from %s", e, self.topic_name_pattern)
 
+            if message is None:
+                logger.warning("no message received by consumer")
+                return 0
+            elif message.error() is not None:
+                logger.error("error from consumer, %s", message.error())
+                return 0
+            else:
+                logger.info("consumed message from topic, %s", self.topic_name_pattern)
+                self.message_handler(message)
+                return 1
+            
 
     def close(self):
         """Cleans up any open kafka consumers"""
-        #
-        #
-        # TODO: Cleanup the kafka consumer
-        #
-        #
+        self.consumer.close()
