@@ -2,7 +2,7 @@
 My Project Solutions From [Udacity Data Streaming Nanodegree Program](https://www.udacity.com/course/data-streaming-nanodegree--nd029).
 
 ## 1. [Data Ingestion with Kafka & Kafka Streaming](https://github.com/kudeh/udacity-dsnd-projects/tree/main/kafka-streaming-pipeline)
-Work of ingesting data to kafka and stream processing on kafka topics.
+Worked on ingesting data into kafka and stream processing on kafka topics.
 
 * **Tasks Completed:**
     * Set up Kafka Topics and Schemas
@@ -24,7 +24,7 @@ Work of ingesting data to kafka and stream processing on kafka topics.
 
 
 ## 2. [Streaming API Development and Documentation](https://github.com/kudeh/udacity-dsnd-projects/tree/main/spark-streaming-pipeline)
-Work of processing apache kafka data streams using pyspark streaming APIs
+Worked on processing apache kafka data streams using pyspark streaming APIs
 
 * **Tasks Completed:**
     * Implement spark streaming pipelines
